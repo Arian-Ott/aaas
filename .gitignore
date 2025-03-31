@@ -1,6 +1,30 @@
-**/*.env
-venv
-**/__pycache__
-.vscode
-.vs
-.ruff_cache
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# Docker
+.dockerignore
+*.log
+
+# Environment & Secrets
+.env
+*.env
+
+# DBs
+*.db
+*.sqlite3
+
+# Testing & Linting
+.coverage
+.pytest_cache/
+.ruff_cache/
+htmlcov/
