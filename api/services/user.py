@@ -4,6 +4,7 @@ from api.crud.user import get_user, update_user, create_user
 from api.core.hashing import get_password_hash
 from sqlalchemy.orm import Session
 
+
 class UserBuilder:
     def __init__(self, db: Session):
         self._id = uuid4()
@@ -62,3 +63,6 @@ class UserBuilder:
         if user is None:
             raise ValueError("No user found")
         return user
+
+    def get_user(self, query: UserQuery):
+        return get_user(self.db, query)

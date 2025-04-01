@@ -35,13 +35,16 @@ class TestUserBuilder:
         from api.schemas.user import CreateUser
         from api.crud.user import create_user
 
-        user = create_user(self.db, CreateUser(
-            id=uuid4(),
-            username="sanityuser",
-            password="plaintext",  # just for test
-            email="sanity@example.com",
-            is_active=True
-        ))
+        user = create_user(
+            self.db,
+            CreateUser(
+                id=uuid4(),
+                username="sanityuser",
+                password="plaintext",  # just for test
+                email="sanity@example.com",
+                is_active=True,
+            ),
+        )
         assert user.username == "sanityuser"
 
     def test_duplicate_email_raises(self):

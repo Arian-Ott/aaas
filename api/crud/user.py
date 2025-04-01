@@ -12,21 +12,21 @@ def get_user(db: Session, user: UserQuery, top_k: int = 1):
     filters = []
     # Dump only the provided fields (non-None, non-unset)
     criteria = user.model_dump(exclude_none=True, exclude_unset=True)
-    
+
     if "username" in criteria:
         filters.append(User.username == criteria.get("username"))
     if "email" in criteria:
         filters.append(User.email == criteria.get("email"))
     if "id" in criteria:
         filters.append(User.id == criteria.get("id"))
-    
+
     if not filters:
         return None if top_k == 1 else []
-    
+
     query = db.query(User).filter(or_(*filters))
     result = query.first() if top_k == 1 else query.all()
     if not result:
-        raise ValueError("No user found")
+        return None
     return result
 
 
@@ -62,17 +62,17 @@ def delete_user(db: Session, user: UserQuery):
 def update_user(db: Session, user_query: UserQuery, new_user: CreateUser):
     """
     Updates an existing user.
-    
+
     Instead of creating a new User instance, we update fields on the existing one.
     """
     # Retrieve the existing user based on the query.
     existing_user = get_user(db, user_query)
-    
+
     # Get only the fields that are provided in new_user.
     updates = new_user.model_dump(exclude_none=True, exclude_unset=True)
     for key, value in updates.items():
         setattr(existing_user, key, value)
-    
+
     db.commit()
     db.refresh(existing_user)
     return existing_user
