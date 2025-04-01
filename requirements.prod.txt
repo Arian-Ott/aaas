@@ -1,0 +1,8 @@
+fastapi[all]
+uvicorn
+sqlalchemy
+jwt
+python-dotenv
+pymysql
+passlib[argon2]
+python-jose[cryptography]

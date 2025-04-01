@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /usr/src/app
 
 # Install Poetry (optional) or pip
-COPY requirements.txt .
+COPY requirements.prod.txt requirements.txt
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
 # ────────📦 Final Runtime Stage ────────
