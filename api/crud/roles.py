@@ -53,7 +53,7 @@ def map_role_permission(db:Session, role:RoleQuery, permission: PermissionQuery)
     if db.query(RolePermission).filter(RolePermission.role_id == lv_role.id, RolePermission.permission_id == lv_permission.id).first():
         raise ValueError("Role-Permission mapping already exists")
 
-    role_permission = RolePermission(role_id=role.id, permission_id=permission.id)
+    role_permission = RolePermission(role_id=lv_role.id, permission_id=lv_permission.id)
     db.add(role_permission)
     db.commit()
     db.refresh(role_permission)
