@@ -6,7 +6,7 @@ from api.db.session import Base
 class BusinessRole(Base):
     __tablename__ = "business_roles"
     id = Column(Integer, primary_key=True, index=True, comment="Role ID", autoincrement=True)
-    rolename = Column(String(length=64), unique=True, index=True, nullable=False, comment="Role name")
+    name = Column(String(length=64), unique=True, index=True, nullable=False, comment="Role name")
     description = Column(String(length=255), nullable=False, comment="Role description")
     
 
