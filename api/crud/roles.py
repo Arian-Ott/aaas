@@ -32,7 +32,7 @@ def get_role(db:Session, role:RoleQuery):
     if role.id:
         return db.query(BusinessRole).filter(BusinessRole.id == role.id).first()
     if role.name:
-        return db.query(BusinessRole).filter(BusinessRole.rolename == role.name).first()
+        return db.query(BusinessRole).filter(BusinessRole.name == role.name).first()
     return None
 
 def get_permission(db:Session, permission:PermissionQuery):
