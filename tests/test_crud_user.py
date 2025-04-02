@@ -3,6 +3,7 @@ from uuid import uuid4
 from api.schemas.user import CreateUser, UserQuery
 from api.crud.user import *
 import sqlalchemy
+from sqlalchemy.exc import IntegrityError
 from api.db.session import Base, engine, SessionLocal
 import uuid
 
@@ -31,18 +32,18 @@ class TestUserCrud:
         user = create_user(self.db, self.test_user)
 
         print(type(user.id), type(self.test_user.id))
-        assert (
-            user.id == self.test_user.id
-        ), f"Expected {self.test_user.id}, but got {user.id}"
-        assert (
-            user.username == self.test_user.username
-        ), f"Expected {self.test_user.username}, but got {user.username}"
-        assert (
-            user.email == self.test_user.email
-        ), f"Expected {self.test_user.email}, but got {user.email}"
-        assert (
-            user.is_active == self.test_user.is_active
-        ), f"Expected {self.test_user.is_active}, but got {user.is_active}"
+        assert user.id == self.test_user.id, (
+            f"Expected {self.test_user.id}, but got {user.id}"
+        )
+        assert user.username == self.test_user.username, (
+            f"Expected {self.test_user.username}, but got {user.username}"
+        )
+        assert user.email == self.test_user.email, (
+            f"Expected {self.test_user.email}, but got {user.email}"
+        )
+        assert user.is_active == self.test_user.is_active, (
+            f"Expected {self.test_user.is_active}, but got {user.is_active}"
+        )
 
     def test_get_user(self):
         user = create_user(self.db, self.test_user)
@@ -50,28 +51,28 @@ class TestUserCrud:
         user_query = UserQuery(id=user.id)
         print(user_query)
         user = get_user(self.db, user_query)
-        assert (
-            user.id == self.test_user.id
-        ), f"Expected {self.test_user.id}, but got {user.id}"
-        assert (
-            user.username == self.test_user.username
-        ), f"Expected {self.test_user.username}, but got {user.username}"
-        assert (
-            user.email == self.test_user.email
-        ), f"Expected {self.test_user.email}, but got {user.email}"
-        assert (
-            user.is_active == self.test_user.is_active
-        ), f"Expected {self.test_user.is_active}, but got {user.is_active}"
+        assert user.id == self.test_user.id, (
+            f"Expected {self.test_user.id}, but got {user.id}"
+        )
+        assert user.username == self.test_user.username, (
+            f"Expected {self.test_user.username}, but got {user.username}"
+        )
+        assert user.email == self.test_user.email, (
+            f"Expected {self.test_user.email}, but got {user.email}"
+        )
+        assert user.is_active == self.test_user.is_active, (
+            f"Expected {self.test_user.is_active}, but got {user.is_active}"
+        )
 
     def test_get_user_no_user(self):
         user_query = UserQuery(id=uuid4())
-
-        with pytest.raises(ValueError):
-            get_user(self.db, user_query)
+        user = get_user(self.db, user_query)
+        
+        assert user is None, f"Expected None, but got {user_query}"
 
     def test_create_multiple_users(self):
         create_user(self.db, self.test_user)
-        with pytest.raises(sqlalchemy.exc.IntegrityError):
+        with pytest.raises(IntegrityError):
             create_user(self.db, self.test_user)
 
     def test_get_all_users(self):
@@ -95,9 +96,9 @@ class TestUserCrud:
         user_query = UserQuery(id=user.id)
         get_user(self.db, user_query)
         delete_user(self.db, user_query)
-        with pytest.raises(ValueError):
-            get_user(self.db, user_query)
-            
+        user = get_user(self.db, user_query)
+        assert user is None, f"Expected None, but got {user_query}"
+
     def test_update_user(self):
         user = create_user(self.db, self.test_user)
         user_query = UserQuery(id=user.id)
@@ -110,18 +111,16 @@ class TestUserCrud:
         )
         update_user(self.db, user_query, updated_user)
         user = get_user(self.db, user_query)
-        assert (
-            user.id == updated_user.id
-        ), f"Expected {updated_user.id}, but got {user.id}"
-        assert (
-            user.username == updated_user.username
-        ), f"Expected {updated_user.username}, but got {user.username}"
-        assert (
-            user.email == updated_user.email
-        ), f"Expected {updated_user.email}, but got {user.email}"
+        assert user.id == updated_user.id, (
+            f"Expected {updated_user.id}, but got {user.id}"
+        )
+        assert user.username == updated_user.username, (
+            f"Expected {updated_user.username}, but got {user.username}"
+        )
+        assert user.email == updated_user.email, (
+            f"Expected {updated_user.email}, but got {user.email}"
+        )
 
-        assert (
-            user.is_active == updated_user.is_active
-        ), f"Expected {updated_user.is_active}, but got {user.is_active}"
-        
-    
+        assert user.is_active == updated_user.is_active, (
+            f"Expected {updated_user.is_active}, but got {user.is_active}"
+        )

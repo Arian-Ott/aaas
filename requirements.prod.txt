@@ -1,14 +1,8 @@
 fastapi[all]
 uvicorn
-ruff
-pylint
 sqlalchemy
-coverage
-pytest
-pytest-cov
 jwt
 python-dotenv
 pymysql
 passlib[argon2]
 python-jose[cryptography]
-requests
