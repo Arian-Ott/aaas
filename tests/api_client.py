@@ -18,6 +18,7 @@ class AbstractAuthenticatedEndpointTest(ABC):
     def inject_fixtures(self, client: TestClient, db: Session):
         self.client = client
         self.db = db
+        
         self._access_token = None
         self._test_user_email = f"test_{uuid4().hex[:6]}@example.com"
         self._test_user_username = f"user_{uuid4().hex[:6]}"

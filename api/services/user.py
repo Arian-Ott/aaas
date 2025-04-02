@@ -1,6 +1,6 @@
 from uuid import uuid4
-from api.schemas.user import CreateUser, UserQuery
-from api.crud.user import get_user, update_user, create_user
+from api.schemas.user import CreateUser, UserQuery, UserUpdateSchema
+from api.crud.user import get_user, update_user, create_user, get_users
 from api.core.hashing import get_password_hash
 from sqlalchemy.orm import Session
 
@@ -63,6 +63,14 @@ class UserBuilder:
         if user is None:
             raise ValueError("No user found")
         return user
-
+    def update_user(self, user, new_user: UserUpdateSchema):
+        user = self.get_user(UserQuery(id=user.id))
+        new_user = CreateUser(id=user.id, username=new_user.username, email=new_user.email, password=user.password, is_active=user.is_active)
+        
+        return update_user(self.db, UserQuery(id=user.id), new_user)
     def get_user(self, query: UserQuery):
         return get_user(self.db, query)
+    
+    def get_users(self):
+        return get_users(self.db)
+

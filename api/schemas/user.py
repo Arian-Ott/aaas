@@ -25,6 +25,14 @@ class UserLogin(UserBase):
 # ----------------------------
 # Create User Schema
 # ----------------------------
+
+class APIUserCreation(BaseModel):
+    email: EmailStr = "someone@example.com"
+    username: str ="arian.ott"
+    password: str ="test1234"
+
+    model_config = ConfigDict(from_attributes=True)
+
 class CreateUser(BaseModel):
     id: Optional[UUID] = None
     email: Optional[EmailStr] = None
@@ -46,5 +54,11 @@ class UserQuery(BaseModel):
     email: Optional[EmailStr] = None
     username: Optional[str] = None
     id: Optional[Union[str, UUID]] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class UserUpdateSchema(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
 
     model_config = ConfigDict(from_attributes=True)

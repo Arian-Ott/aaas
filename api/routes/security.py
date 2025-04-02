@@ -1,4 +1,4 @@
-from . import API_PREFIX
+from . import API_PREFIX, oauth2_scheme
 from uuid import uuid4
 from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,12 +12,12 @@ from api.db.session import get_db
 from api.services.user import UserBuilder
 from api.schemas.user import UserLogin, UserQuery
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=API_PREFIX + "/sagw/token")
+
 sapi_router = APIRouter(prefix=API_PREFIX + "/sagw", tags=["sagw"])
 
 
 @sapi_router.get("/public_key")
-async def public_key():
+def public_key():
     """Return the public key for the API."""
     with open("api/core/certs/ec-public.pem", "r") as f:
         return {"public_key": f.read(), "alg": "ES512", "use": "sig"}
