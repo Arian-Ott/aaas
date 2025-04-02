@@ -7,7 +7,8 @@ app = FastAPI()
 
 
 def startup():
-    Base.metadata.drop_all(bind=engine)
+    if os.getenv("ENV") != "production":
+        Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
     
 
