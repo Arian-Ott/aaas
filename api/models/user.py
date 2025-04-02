@@ -45,3 +45,4 @@ class User(Base):
     password = Column(
         String(length=255), nullable=False, comment="Hashed password for user"
     )
+
