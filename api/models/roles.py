@@ -1,27 +1,42 @@
-from sqlalchemy import Column, Integer, String, DateTime, Boolean
+# models/roles.py
+from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql.schema import ForeignKey
 from api.db.session import Base
 
 class BusinessRole(Base):
     __tablename__ = "business_roles"
-    id = Column(Integer, primary_key=True, index=True, comment="Role ID", autoincrement=True)
-    name = Column(String(length=64), unique=True, index=True, nullable=False, comment="Role name")
-    description = Column(String(length=255), nullable=False, comment="Role description")
-    
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(64), unique=True, nullable=False, index=True)
+    description = Column(String(255), nullable=False)
+
+    role_permissions = relationship(
+        "RolePermission",
+        back_populates="role",
+        cascade="all, delete-orphan"
+    )
+
 
 class Permission(Base):
     __tablename__ = "permissions"
-    id = Column(Integer, primary_key=True, index=True, comment="Permission ID", autoincrement=True)
-    name = Column(String(length=64), unique=True, index=True, nullable=False, comment="Permission name")
-    description = Column(String(length=255), nullable=False, comment="Permission description")
-    
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(64), unique=True, nullable=False, index=True)
+    description = Column(String(255), nullable=False)
+
+    role_permissions = relationship(
+        "RolePermission",
+        back_populates="permission",
+        cascade="all, delete-orphan"
+    )
+
 
 class RolePermission(Base):
     __tablename__ = "role_permissions"
-    id = Column(Integer, primary_key=True, index=True, comment="Role Permission ID", autoincrement=True)
-    role_id = Column(Integer, ForeignKey('business_roles.id'), nullable=False, comment="Role ID")
-    permission_id = Column(Integer, ForeignKey('permissions.id'), nullable=False, comment="Permission ID")
-    
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    role_id = Column(Integer, ForeignKey("business_roles.id", ondelete="CASCADE"), nullable=False)
+    permission_id = Column(Integer, ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False)
+
     role = relationship("BusinessRole", back_populates="role_permissions")
     permission = relationship("Permission", back_populates="role_permissions")

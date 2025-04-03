@@ -1,28 +1,44 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+# schemas/roles.py
+from pydantic import BaseModel
 
-from typing import Optional, Union
+# --- Base Classes ---
+class BusinessRoleBase(BaseModel):
+    name: str
+    description: str
 
-class PermissionSchema(BaseModel):
-    name:str
-    description:str
-    model_config = ConfigDict(from_attributes=True)
+class PermissionBase(BaseModel):
+    name: str
+    description: str
 
-class PermissionQuery(BaseModel):
-    name:Optional[str]
-    id:Optional[int]
-    model_config = ConfigDict(from_attributes=True)
+class RolePermissionBase(BaseModel):
+    role_id: int
+    permission_id: int
 
-class CreateRole(BaseModel):
-    name:str
-    description:str
 
-    model_config = ConfigDict(from_attributes=True)
-    
-class RoleQuery(BaseModel):
-    name:Optional[str]
-    id:Optional[int]
-    model_config = ConfigDict(from_attributes=True)
+# --- Create Schemas ---
+class BusinessRoleCreate(BusinessRoleBase):
+    pass
 
-class BusinessRole(BaseModel):
-    name:str
-    description:str
+class PermissionCreate(PermissionBase):
+    pass
+
+class RolePermissionCreate(RolePermissionBase):
+    pass
+
+
+# --- Read/Response Schemas ---
+class BusinessRoleRead(BusinessRoleBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class PermissionRead(PermissionBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class RolePermissionRead(RolePermissionBase):
+    id: int
+    class Config:
+        orm_mode = True
+

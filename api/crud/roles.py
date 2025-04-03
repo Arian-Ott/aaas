@@ -1,65 +1,93 @@
-from api.models.roles import BusinessRole, Permission, RolePermission
+
+# crud/roles.py
 from sqlalchemy.orm import Session
-from api.schemas.roles import CreateRole, RoleQuery, PermissionSchema, PermissionQuery
+from api.models.roles import BusinessRole, Permission, RolePermission
+from api.schemas.roles import BusinessRoleCreate, PermissionCreate, RolePermissionCreate
 
-from typing import List
+# --- BusinessRole CRUD ---
+def get_business_role(db, role_id):
+    return db.query(BusinessRole).filter(BusinessRole.id == role_id).first()
 
-def create_permission(db: Session, permission: PermissionSchema):
-    new_permission = Permission(**permission.model_dump(exclude_unset=True))
-    if db.query(Permission).filter(Permission.name == new_permission.name).first():
+def get_all_business_roles(db):
+    return db.query(BusinessRole).all()
+
+def create_business_role(db, role_data):
+    db_role = BusinessRole(**role_data.dict())
+    db.add(db_role)
+    db.commit()
+    db.refresh(db_role)
+    return db_role
+
+def update_business_role(db, role_id, role_data):
+    db_role = get_business_role(db, role_id)
+    if not db_role:
         return None
-    db.add(new_permission)
+    for key, value in role_data.dict().items():
+        setattr(db_role, key, value)
     db.commit()
-    db.refresh(new_permission)
-    return new_permission
+    db.refresh(db_role)
+    return db_role
 
-
-def create_role(db: Session, role: CreateRole):
-    """
-    Creates a new BusinessRole instance using data from the CreateRole schema.
-    Commits the new role to the database.
-    """
-    
-    new_role = BusinessRole(**role.model_dump(exclude_none=True, exclude_unset=False))
-    
-    db.add(new_role)
+def delete_business_role(db, role_id):
+    db_role = get_business_role(db, role_id)
+    if not db_role:
+        return False
+    db.delete(db_role)
     db.commit()
-    db.refresh(new_role)
-    
-    return new_role
-
-def get_role(db:Session, role:RoleQuery):
-    if role.id:
-        return db.query(BusinessRole).filter(BusinessRole.id == role.id).first()
-    if role.name:
-        return db.query(BusinessRole).filter(BusinessRole.rolename == role.name).first()
-    return None
-
-def get_permission(db:Session, permission:PermissionQuery):
-    if permission.id:
-        return db.query(Permission).filter(Permission.id == permission.id).first()
-    if permission.name:
-        return db.query(Permission).filter(Permission.name == permission.name).first()
-    return None
+    return True
 
 
-def map_role_permission(db:Session, role:RoleQuery, permission: PermissionQuery):
-    lv_role = get_role(db, role)
-    lv_permission = get_permission(db, permission)
-    if lv_role is None:
-        raise ValueError("Role not found")
-    if lv_permission is None:
-        raise ValueError("Permission not found")
-    if db.query(RolePermission).filter(RolePermission.role_id == lv_role.id, RolePermission.permission_id == lv_permission.id).first():
-        raise ValueError("Role-Permission mapping already exists")
+# --- Permission CRUD ---
+def get_permission(db, permission_id):
+    return db.query(Permission).filter(Permission.id == permission_id).first()
 
-    role_permission = RolePermission(role_id=role.id, permission_id=permission.id)
-    db.add(role_permission)
+def get_all_permissions(db):
+    return db.query(Permission).all()
+
+def create_permission(db, permission_data):
+    db_perm = Permission(**permission_data.dict())
+    db.add(db_perm)
     db.commit()
-    db.refresh(role_permission)
-    return role_permission
+    db.refresh(db_perm)
+    return db_perm
 
-    
-        
-#TODO: Add tests for the above functions
-#TODO: Add functions for CRUD operations on roles and permissions
+def update_permission(db, permission_id, permission_data):
+    db_perm = get_permission(db, permission_id)
+    if not db_perm:
+        return None
+    for key, value in permission_data.dict().items():
+        setattr(db_perm, key, value)
+    db.commit()
+    db.refresh(db_perm)
+    return db_perm
+
+def delete_permission(db, permission_id):
+    db_perm = get_permission(db, permission_id)
+    if not db_perm:
+        return False
+    db.delete(db_perm)
+    db.commit()
+    return True
+
+
+# --- RolePermission CRUD ---
+def get_role_permission(db, role_permission_id):
+    return db.query(RolePermission).filter(RolePermission.id == role_permission_id).first()
+
+def get_all_role_permissions(db):
+    return db.query(RolePermission).all()
+
+def create_role_permission(db, rp_data):
+    db_rp = RolePermission(**rp_data.dict())
+    db.add(db_rp)
+    db.commit()
+    db.refresh(db_rp)
+    return db_rp
+
+def delete_role_permission(db, role_permission_id):
+    db_rp = get_role_permission(db, role_permission_id)
+    if not db_rp:
+        return False
+    db.delete(db_rp)
+    db.commit()
+    return True

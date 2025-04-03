@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from api.routes import user
 from api.routes import security
+from api.routes import roles
 from api.db.session import Base, engine
 from api.core.config import settings
 app = FastAPI()
@@ -15,3 +16,5 @@ def startup():
 app.add_event_handler("startup", startup)
 app.include_router(user.router)
 app.include_router(security.sapi_router)
+app.include_router(roles.router)
+
