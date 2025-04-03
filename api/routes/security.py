@@ -59,13 +59,4 @@ async def login_with_form(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@sapi_router.get("/me")
-def read_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = verify_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    usr = UserBuilder(db)
 
-    usr = usr.get_user(UserQuery(id=UUID(payload.get("sub"))))
-    del usr.password
-    return usr

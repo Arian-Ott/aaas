@@ -2,12 +2,13 @@ import os
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from api.core.config import settings
-
+from uuid import UUID   
 if not os.path.exists("api/core/certs/ec-private.pem"):
     raise FileNotFoundError("Private key not found")
 if not os.path.exists("api/core/certs/ec-public.pem"):
     raise FileNotFoundError("Public key not found")
- 
+
+
 with open("api/core/certs/ec-private.pem", "r") as f:
     PRIVATE_KEY = f.read()
 
@@ -24,10 +25,13 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     :param timedelta expires_delta: Expiration time for the token
     :return str: JWT token
     """
+    
     to_encode = data.copy()
+    
     expire = datetime.now() + (
         expires_delta or timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     )
+    
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, PRIVATE_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt

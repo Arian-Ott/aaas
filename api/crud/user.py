@@ -11,18 +11,20 @@ def get_user(db: Session, user: UserQuery, top_k: int = 1):
     """
     filters = []
     # Dump only the provided fields (non-None, non-unset)
-    criteria = user.model_dump(exclude_none=True, exclude_unset=True)
+    try:
+        criteria = user.model_dump(exclude_none=True, exclude_unset=True)
 
-    if "username" in criteria:
-        filters.append(User.username == criteria.get("username"))
-    if "email" in criteria:
-        filters.append(User.email == criteria.get("email"))
-    if "id" in criteria:
-        filters.append(User.id == criteria.get("id"))
+        if "username" in criteria:
+            filters.append(User.username == criteria.get("username"))
+        if "email" in criteria:
+            filters.append(User.email == criteria.get("email"))
+        if "id" in criteria:
+            filters.append(User.id == criteria.get("id"))
 
-    if not filters:
-        return None if top_k == 1 else []
-
+        if not filters:
+            return None if top_k == 1 else []
+    except AttributeError:
+        pass # I know this is bad but I need it till i find a better way to handle this :)
     query = db.query(User).filter(or_(*filters))
     result = query.first() if top_k == 1 else query.all()
     if not result:
@@ -54,7 +56,9 @@ def delete_user(db: Session, user: UserQuery):
     """
     Deletes a user matching the query.
     """
+    
     existing_user = get_user(db, user)
+    
     db.delete(existing_user)
     db.commit()
 

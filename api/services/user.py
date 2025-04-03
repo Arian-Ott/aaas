@@ -1,6 +1,6 @@
 from uuid import uuid4
 from api.schemas.user import CreateUser, UserQuery, UserUpdateSchema
-from api.crud.user import get_user, update_user, create_user, get_users
+from api.crud.user import get_user, update_user, create_user, get_users, delete_user
 from api.core.hashing import get_password_hash
 from sqlalchemy.orm import Session
 
@@ -73,4 +73,8 @@ class UserBuilder:
     
     def get_users(self):
         return get_users(self.db)
+    
+    def delete_user(self, user: UserQuery):
+        user = self.get_user(user)
+        return delete_user(self.db, user)
 
