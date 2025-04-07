@@ -40,8 +40,6 @@ def setup_test_db():
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
-
 @pytest.fixture(scope="function")
 def db():
     """Provides a clean DB session per test function."""
