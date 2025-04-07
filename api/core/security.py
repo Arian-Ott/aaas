@@ -1,7 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
-from api.core.config import settings
+from api.core.deps import settings
 from uuid import UUID   
 if not os.path.exists("api/core/certs/ec-private.pem"):
     raise FileNotFoundError("Private key not found")

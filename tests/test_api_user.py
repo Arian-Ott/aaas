@@ -1,6 +1,6 @@
 from tests.api_client import AbstractAuthenticatedEndpointTest
 from uuid import uuid4
-from api.core.config import settings
+from api.core.deps import settings
 import pytest
 from api.schemas.user import CreateUser, UserUpdateSchema
 import requests
