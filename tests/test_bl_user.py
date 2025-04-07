@@ -19,6 +19,7 @@ class TestUserBuilder:
         # Clean up the database after each test
         self.db.close()
         Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
     def test_create_user_success(self):
         builder = UserBuilder(self.db)
@@ -103,3 +104,16 @@ class TestUserBuilder:
         queried = get_user(self.db, UserQuery(email=email))
         assert queried is not None
         assert queried.username == "querytestuser"
+
+    def test_delete_user(self):
+        email = uuid4().hex + "@example.com"
+        builder = UserBuilder(self.db)
+        builder.set_username("deleteuser")
+        builder.set_password("complexpass123")
+        builder.set_email(email)
+        user = builder.commit()
+        assert user is not None
+        builder.delete_user(UserQuery(email=email))
+        queried = get_user(self.db, UserQuery(email=email))
+        assert queried is None, "User should be deleted"
+        

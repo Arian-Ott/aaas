@@ -20,9 +20,9 @@ class AbstractAuthenticatedEndpointTest(ABC):
         self.db = db
         
         self._access_token = None
-        self._test_user_email = f"test_{uuid4().hex[:6]}@example.com"
-        self._test_user_username = f"user_{uuid4().hex[:6]}"
-        self._test_user_id = str(uuid4())
+        self._test_user_email = f"test_{uuid4().hex}@example.com"
+        self._test_user_username = f"user_{uuid4().hex}"
+        self._test_user_id = uuid4()
         self._create_test_user()
 
     @property
@@ -39,7 +39,7 @@ class AbstractAuthenticatedEndpointTest(ABC):
         user.commit()
 
     def generate_token(self) -> str:
-        return create_access_token(data={"sub": self._test_user_email})
+        return create_access_token(data={"sub": str(self._test_user_id)})
 
     def _auth_headers(self) -> dict:
         if not self._access_token:
@@ -77,9 +77,8 @@ class AbstractAuthenticatedEndpointTest(ABC):
             headers=self._auth_headers()
         )
 
-    def auth_delete(self, path: str, data: dict = None):
+    def auth_delete(self, path: str, ):
         return self.client.delete(
             f"{self.endpoint}{path}",
-            json=data or {},
             headers=self._auth_headers()
         )

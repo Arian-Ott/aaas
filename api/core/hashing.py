@@ -1,6 +1,8 @@
 from passlib.context import CryptContext
 
-pwd_context = CryptContext(schemes=["argon2"], default="argon2", deprecated="auto")
+pwd_context = CryptContext(schemes=["argon2"], default="argon2", deprecated="auto",argon2__memory_cost=131072,   # 128 MiB – better than OWASP baseline
+    argon2__time_cost=5,          # 5 iterations – above most current recommendations
+    argon2__parallelism=2 )
 
 
 def get_password_hash(password: str):

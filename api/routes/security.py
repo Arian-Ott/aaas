@@ -16,11 +16,15 @@ from api.schemas.user import UserLogin, UserQuery
 sapi_router = APIRouter(prefix=API_PREFIX + "/sagw", tags=["sagw"])
 
 
-@sapi_router.get("/public_key")
+@sapi_router.get("/public_key",)
 def public_key():
     """Return the public key for the API."""
-    with open("api/core/certs/ec-public.pem", "r") as f:
-        return {"public_key": f.read(), "alg": "ES512", "use": "sig"}
+    try:
+        with open("api/core/certs/ec-public.pem", "r") as f:
+            return {"public_key": f.read(), "alg": "ES512", "use": "sig"}
+    except FileNotFoundError:
+        raise HTTPException(status_code=500, detail="Public key not found")
+    
 
 
 @sapi_router.post("/login")
@@ -59,13 +63,4 @@ async def login_with_form(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@sapi_router.get("/me")
-def read_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    payload = verify_token(token)
-    if payload is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
-    usr = UserBuilder(db)
 
-    usr = usr.get_user(UserQuery(id=UUID(payload.get("sub"))))
-    del usr.password
-    return usr

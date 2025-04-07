@@ -1,15 +1,18 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
-from api.core.config import settings
+from api.core.deps import settings
 
-if settings.DATABASE_URL.startswith("sqlite"):
-    connect_args = {"check_same_thread": False}
+if settings.PROD == True:
     engine = create_engine(
-        settings.DATABASE_URL, connect_args=connect_args, future=True
+        settings.DATABASE_URL,
+        pool_pre_ping=True,
+        future=True,
+        
     )
 else:
     engine = create_engine(
-        settings.DATABASE_URL,
+        "sqlite:///./test.db",
+   
         pool_pre_ping=True,
         future=True,
     )

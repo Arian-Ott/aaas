@@ -16,4 +16,4 @@ def test_get_password_hash():
     assert hashed_password != test_pw, (
         "Hashed password should not be equal to the password"
     )
-    assert len(hashed_password) == 97, "Hashed password should be 97 characters long"
+    assert len(hashed_password) == 98, f"Hashed password should be 97 characters long but got {len(hashed_password)}"
