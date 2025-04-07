@@ -101,3 +101,38 @@ def delete_me(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 
     usr.delete_user(UserQuery(id=user_id))
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+@router.put("/business-role", status_code=status.HTTP_200_OK, 
+            responses={
+                200: {"description": "Business role updated successfully"},
+                401: {"description": "Invalid token"},
+                404: {"description": "User not found"},
+                400: {"description": "Invalid business role"},
+                
+            })
+def add_business_role(
+    token: str = Depends(oauth2_scheme), 
+    db: Session = Depends(get_db),
+    business_role: str = "business"
+):
+    payload = verify_token(token)
+    if not payload or "sub" not in payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    try:
+        user_id = UUID(payload["sub"])
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid token format")
+
+    usr = UserBuilder(db)
+    lo_usr = usr.get_user(UserQuery(id=user_id))
+    if not lo_usr:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if business_role not in ["business", "admin"]:
+        raise HTTPException(status_code=400, detail="Invalid business role")
+
+    usr.add_business_role(UserQuery(id=user_id), business_role)
+    
+    return {"message": "Business role updated successfully"}

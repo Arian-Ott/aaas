@@ -19,6 +19,7 @@ class TestUserBuilder:
         # Clean up the database after each test
         self.db.close()
         Base.metadata.drop_all(bind=engine)
+        Base.metadata.create_all(bind=engine)
 
     def test_create_user_success(self):
         builder = UserBuilder(self.db)
