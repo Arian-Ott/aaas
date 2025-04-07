@@ -5,7 +5,7 @@ from ssl import RAND_bytes
 
 class Settings(BaseSettings):
     """Settings for the application"""
-    DATABASE_URL: str = "sqlite:///./test.db"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./test.db"
     API_PREFIX: str = "/api"
     ALGORITHM:str  = "ES512"
     ACCESS_TOKEN_EXPIRE_MINUTES:int = 30
